@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traslados - Software Hospital</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-contenido">
+      <div class="navbar-logo">
+        <span class="logo-texto">Hospital</span>
+      </div>
+      <a class="btn-logout" href="panel.html">Volver al Panel</a>
+    </div>
+  </nav>
+
+  <div class="panel-contenedor">
+    <header class="panel-header">
+      <h1>Traslados</h1>
+      <p>Gestiona y visualiza los traslados de pacientes.</p>
+    </header>
+
+    <main class="traslados-contenedor">
+      <div class="traslados-acciones">
+        <button id="btnNuevoTraslado" class="boton-panel">Iniciar Nuevo Traslado</button>
+      </div>
+
+      <section id="seccionForm" class="oculta">
+        <div class="doc-header">
+          <button class="btn-volver" id="btnCerrarForm">Cancelar</button>
+          <h2>Nuevo Traslado</h2>
+        </div>
+        <form id="formTraslado">
+          <label>Paciente: <input type="text" id="inputPaciente" required></label>
+          <label>Origen: <input type="text" id="inputOrigen" required></label>
+          <label>Destino: <input type="text" id="inputDestino" required></label>
+          <label>Notas: <input type="text" id="inputNotas"></label>
+          <button type="submit" class="btn-accion">Guardar Traslado</button>
+        </form>
+      </section>
+
+      <section id="listaTrasladosSection">
+        <h2>Traslados Registrados</h2>
+        <div id="listaTraslados"></div>
+      </section>
+
+      <div id="detalleModal" class="modal oculta">
+        <div class="modal-contenedor">
+          <button class="modal-cerrar" id="btnCerrarDetalle">&times;</button>
+          <div class="modal-contenido">
+            <h3 id="detalleTitulo">Traslado</h3>
+            <div id="detalleContenido"></div>
+            <h4>Historial</h4>
+            <div id="detalleHistorial"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/traslados.js"></script>
+</body>
+</html>
