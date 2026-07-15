@@ -48,7 +48,7 @@ function renderizarLista() {
 function abrirFormulario() {
   idEdicionActual = ''
   document.getElementById('formTitulo').textContent = 'Nuevo Traslado'
-  document.getElementById('currentEditId').value = ''
+  const hiddenId = document.getElementById('idEdicionActual'); if (hiddenId) hiddenId.value = ''
   document.getElementById('seccionForm').classList.remove('oculta')
   setTimeout(() => { if (mapa) mapa.invalidateSize() }, 200)
 }
@@ -56,18 +56,18 @@ function abrirFormulario() {
 function abrirFormularioEdicion(traslado) {
   idEdicionActual = traslado.id
   document.getElementById('formTitulo').textContent = 'Editar Traslado — Iniciado'
-  document.getElementById('currentEditId').value = traslado.id
-  document.getElementById('inputPaciente').value = traslado.paciente
-  document.getElementById('inputOrigen').value = traslado.origen
-  document.getElementById('inputDestino').value = traslado.destino
-  document.getElementById('inputNotas').value = traslado.notas || ''
+  const hiddenId = document.getElementById('idEdicionActual'); if (hiddenId) hiddenId.value = traslado.id
+  const entPac = document.getElementById('entradaPaciente'); if (entPac) entPac.value = traslado.paciente
+  const entOri = document.getElementById('entradaOrigen'); if (entOri) entOri.value = traslado.origen
+  const entDes = document.getElementById('entradaDestino'); if (entDes) entDes.value = traslado.destino
+  const entNotas = document.getElementById('notasTraslado'); if (entNotas) entNotas.value = traslado.notas || ''
   if (traslado.origenCoord) {
-    document.getElementById('inputLatOrigin').value = traslado.origenCoord.lat
-    document.getElementById('inputLngOrigin').value = traslado.origenCoord.lng
+    const latO = document.getElementById('entradaLatOrigen'); if (latO) latO.value = traslado.origenCoord.lat
+    const lngO = document.getElementById('entradaLngOrigen'); if (lngO) lngO.value = traslado.origenCoord.lng
   }
   if (traslado.destinoCoord) {
-    document.getElementById('inputLatDest').value = traslado.destinoCoord.lat
-    document.getElementById('inputLngDest').value = traslado.destinoCoord.lng
+    const latD = document.getElementById('entradaLatDestino'); if (latD) latD.value = traslado.destinoCoord.lat
+    const lngD = document.getElementById('entradaLngDestino'); if (lngD) lngD.value = traslado.destinoCoord.lng
   }
   document.getElementById('seccionForm').classList.remove('oculta')
   setTimeout(() => {
@@ -89,7 +89,7 @@ function abrirFormularioEdicion(traslado) {
 function cerrarFormulario() {
   idEdicionActual = ''
   document.getElementById('formTraslado').reset()
-  document.getElementById('currentEditId').value = ''
+  const hiddenId = document.getElementById('idEdicionActual'); if (hiddenId) hiddenId.value = ''
   document.getElementById('seccionForm').classList.add('oculta')
 }
 
@@ -163,39 +163,39 @@ document.addEventListener('DOMContentLoaded', () => {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap'
-    }).addTo(map)
-    map.on('click', (ev) => {
+    }).addTo(mapa)
+    mapa.on('click', (ev) => {
       const lat = ev.latlng.lat
       const lng = ev.latlng.lng
       if (modoMapa === 'origen') {
         if (marcadorOrigen) mapa.removeLayer(marcadorOrigen)
         marcadorOrigen = L.marker([lat, lng]).addTo(mapa).bindPopup('Origen').openPopup()
-        document.getElementById('inputLatOrigin').value = lat
-        document.getElementById('inputLngOrigin').value = lng
+        const latO = document.getElementById('entradaLatOrigen'); if (latO) latO.value = lat
+        const lngO = document.getElementById('entradaLngOrigen'); if (lngO) lngO.value = lng
       } else {
         if (marcadorDestino) mapa.removeLayer(marcadorDestino)
         marcadorDestino = L.marker([lat, lng]).addTo(mapa).bindPopup('Destino').openPopup()
-        document.getElementById('inputLatDest').value = lat
-        document.getElementById('inputLngDest').value = lng
+        const latD = document.getElementById('entradaLatDestino'); if (latD) latD.value = lat
+        const lngD = document.getElementById('entradaLngDestino'); if (lngD) lngD.value = lng
       }
     })
   } catch (err) {
     console.warn('Leaflet no pudo inicializarse:', err)
   }
 
-  document.getElementById('btnSetOrigin').addEventListener('click', () => { modoMapa = 'origen' })
-  document.getElementById('btnSetDest').addEventListener('click', () => { modoMapa = 'destino' })
+  const btnMarcarOrigen = document.getElementById('btnMarcarOrigen'); if (btnMarcarOrigen) btnMarcarOrigen.addEventListener('click', () => { modoMapa = 'origen' })
+  const btnMarcarDestino = document.getElementById('btnMarcarDestino'); if (btnMarcarDestino) btnMarcarDestino.addEventListener('click', () => { modoMapa = 'destino' })
 
   document.getElementById('formTraslado').addEventListener('submit', (e) => {
     e.preventDefault()
-    const paciente = document.getElementById('inputPaciente').value.trim()
-    const origen = document.getElementById('inputOrigen').value.trim()
-    const destino = document.getElementById('inputDestino').value.trim()
-    const notas = document.getElementById('inputNotas').value.trim()
-    const latO = document.getElementById('inputLatOrigin').value
-    const lngO = document.getElementById('inputLngOrigin').value
-    const latD = document.getElementById('inputLatDest').value
-    const lngD = document.getElementById('inputLngDest').value
+    const paciente = (document.getElementById('entradaPaciente') || {}).value ? document.getElementById('entradaPaciente').value.trim() : ''
+    const origen = (document.getElementById('entradaOrigen') || {}).value ? document.getElementById('entradaOrigen').value.trim() : ''
+    const destino = (document.getElementById('entradaDestino') || {}).value ? document.getElementById('entradaDestino').value.trim() : ''
+    const notas = (document.getElementById('notasTraslado') || {}).value ? document.getElementById('notasTraslado').value.trim() : ''
+    const latO = (document.getElementById('entradaLatOrigen') || {}).value
+    const lngO = (document.getElementById('entradaLngOrigen') || {}).value
+    const latD = (document.getElementById('entradaLatDestino') || {}).value
+    const lngD = (document.getElementById('entradaLngDestino') || {}).value
     if (!paciente || !origen || !destino) return alert('Complete los campos obligatorios')
     const lista = cargarTraslados()
     if (idEdicionActual) {

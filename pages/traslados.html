@@ -36,21 +36,21 @@
           <h2 id="formTitulo">Nuevo Traslado</h2>
         </div>
         <form id="formTraslado">
-          <input type="hidden" id="currentEditId" value="">
-          <label>Paciente: <input type="text" id="inputPaciente" required></label>
-          <label>Origen: <input type="text" id="inputOrigen" required></label>
-          <label>Destino: <input type="text" id="inputDestino" required></label>
-          <label>Notas: <input type="text" id="inputNotas"></label>
+          <input type="hidden" id="idEdicionActual" value="">
+          <label>Paciente: <input type="text" id="entradaPaciente" required></label>
+          <label>Origen: <input type="text" id="entradaOrigen" required></label>
+          <label>Destino: <input type="text" id="entradaDestino" required></label>
+          <label>Notas: <input type="text" id="notasTraslado"></label>
           <div class="map-frame">
             <p>Haz click en el mapa para establecer la ubicación (origen/destino según selección).</p>
             <div id="map" style="height:280px;border:1px solid #ccc;margin-bottom:8px"></div>
-            <button type="button" id="btnSetOrigin" class="btn-accion">Marcar Origen</button>
-            <button type="button" id="btnSetDest" class="btn-accion">Marcar Destino</button>
+            <button type="button" id="btnMarcarOrigen" class="btn-accion">Marcar Origen</button>
+            <button type="button" id="btnMarcarDestino" class="btn-accion">Marcar Destino</button>
           </div>
-          <input type="hidden" id="inputLatOrigin">
-          <input type="hidden" id="inputLngOrigin">
-          <input type="hidden" id="inputLatDest">
-          <input type="hidden" id="inputLngDest">
+          <input type="hidden" id="entradaLatOrigen">
+          <input type="hidden" id="entradaLngOrigen">
+          <input type="hidden" id="entradaLatDestino">
+          <input type="hidden" id="entradaLngDestino">
           <button type="submit" class="btn-accion">Guardar Traslado</button>
         </form>
       </section>

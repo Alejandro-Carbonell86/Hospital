@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentos - Software Hospital</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-contenido">
+      <div class="navbar-logo">
+        <span class="logo-texto">Hospital</span>
+      </div>
+      <a class="btn-logout" href="panel.html">Volver al Panel</a>
+    </div>
+  </nav>
+
+  <div class="panel-contenedor">
+    <header class="panel-header">
+      <h1>Gestión de Documentos</h1>
+      <p>Sube y administra documentos PDF con código QR.</p>
+    </header>
+
+    <main class="seccion-documentos">
+      <div class="doc-header">
+        <a class="btn-volver" href="panel.html">Volver</a>
+        <h2>Gestión de Documentos</h2>
+      </div>
+
+      <div class="doc-contenido">
+        <div class="doc-upload-section">
+          <h3>Subir Documento PDF</h3>
+          <div class="upload-area area-subida" id="areaSubida">
+            <input type="file" id="entradaPDF" accept=".pdf" style="display: none;" />
+            <label for="entradaPDF" class="upload-label etiqueta-subida">
+              <span>Haz clic o arrastra un PDF aquí</span>
+            </label>
+          </div>
+          <div id="mensajeSubida" class="upload-message mensaje-subida"></div>
+        </div>
+
+        <div class="doc-acciones acciones-documentos">
+          <button class="btn-accion btn-subir" id="btnSubir">Subir</button>
+          <button class="btn-accion btn-eliminar" id="btnEliminar">Eliminar Seleccionados</button>
+        </div>
+
+        <div class="doc-lista-section">
+          <h3>Documentos Guardados</h3>
+          <div class="doc-lista lista-documentos" id="listaDocumentos">
+            <p class="sin-documentos">No hay documentos guardados</p>
+          </div>
+        </div>
+
+        <div class="doc-preview-section">
+          <h3>Vista Previa y Código QR</h3>
+          <div class="doc-preview vista-previa" id="vistaPrevia">
+            <p class="sin-preview">Selecciona un documento para ver la vista previa</p>
+          </div>
+        </div>
+
+        <div id="seccionQR" class="qr-print-section oculta">
+          <div class="qr-print-contenedor">
+            <h3 id="tituloQR">Documento</h3>
+            <div id="contenedorQR" class="qr-container contenedor-qr"></div>
+            <p class="qr-info">
+              <strong>Token:</strong> <span id="tokenQR">-</span>
+            </p>
+            <input type="text" id="nombreDocumentoEditar" class="input-nombre-doc" placeholder="Nombre del documento" />
+            <button id="btnGuardarNombre" class="btn-guardar-nombre">Guardar Nombre</button>
+            <button id="btnImprimirQR" class="btn-imprimir-qr">Imprimir QR</button>
+          </div>
+        </div>
+
+        <div id="modalVistaPrevia" class="modal oculta">
+          <div class="modal-contenedor">
+            <button class="modal-cerrar" id="btnCerrarModal">&times;</button>
+            <div class="modal-contenido">
+              <div class="modal-pdf">
+                <iframe id="visorPDFModal" src="" type="application/pdf" class="modal-pdf-viewer visor-pdf-modal"></iframe>
+              </div>
+              <div class="modal-qr">
+                <h3 id="tituloQRModal">Documento</h3>
+                <div id="contenedorQRModal" class="modal-qr-container contenedor-qr-modal"></div>
+                <p class="modal-qr-info">
+                  <strong>Token:</strong> <br>
+                  <span id="tokenQRModal">-</span>
+                </p>
+                <button id="btnImprimirModalQR" class="btn-imprimir-modal-qr">Imprimir QR</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/documentos.js"></script>
+</body>
+</html>

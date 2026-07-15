@@ -2,31 +2,29 @@
 class GestorDocumentos {
   constructor() {
     this.claveAlmacenamiento = 'hospital_documentos';
-    this.entradaPDF = document.getElementById('inputPDF');
-    this.areaSubida = document.getElementById('uploadArea');
+    this.entradaPDF = document.getElementById('entradaPDF');
+    this.areaSubida = document.getElementById('areaSubida');
     this.btnSubir = document.getElementById('btnSubir');
     this.btnEliminar = document.getElementById('btnEliminar');
-    this.btnDocumentos = document.getElementById('btnDocumentos');
-    this.btnVolverDocumentos = document.getElementById('btnVolverDocumentos');
     this.listaDocumentos = document.getElementById('listaDocumentos');
     this.vistaPrevia = document.getElementById('vistaPrevia');
     this.seccionDocumentos = document.getElementById('seccionDocumentos');
-    this.mensajeSubida = document.getElementById('uploadMessage');
+    this.mensajeSubida = document.getElementById('mensajeSubida');
     this.seccionQR = document.getElementById('seccionQR');
-    this.qrContainer = document.getElementById('qrContainer');
-    this.qrTitulo = document.getElementById('qrTitulo');
-    this.qrToken = document.getElementById('qrToken');
-    this.nombreDocumentoEdit = document.getElementById('nombreDocumentoEdit');
+    this.contenedorQR = document.getElementById('contenedorQR');
+    this.tituloQR = document.getElementById('tituloQR');
+    this.tokenQR = document.getElementById('tokenQR');
+    this.nombreDocumentoEditar = document.getElementById('nombreDocumentoEditar');
     this.btnGuardarNombre = document.getElementById('btnGuardarNombre');
     this.btnImprimirQR = document.getElementById('btnImprimirQR');
     this.archivoSeleccionado = null;
     this.documentoActualSeleccionado = null;
-    this.modalPreview = document.getElementById('modalPreview');
+    this.modalPreview = document.getElementById('modalVistaPrevia');
     this.btnCerrarModal = document.getElementById('btnCerrarModal');
-    this.modalPDFViewer = document.getElementById('modalPDFViewer');
-    this.modalQRContainer = document.getElementById('modalQRContainer');
-    this.modalQRTitulo = document.getElementById('modalQRTitulo');
-    this.modalQRToken = document.getElementById('modalQRToken');
+    this.modalPDFViewer = document.getElementById('visorPDFModal');
+    this.modalQRContainer = document.getElementById('contenedorQRModal');
+    this.modalQRTitulo = document.getElementById('tituloQRModal');
+    this.modalQRToken = document.getElementById('tokenQRModal');
     this.btnImprimirModalQR = document.getElementById('btnImprimirModalQR');
     this.documentoModalActual = null;
 
@@ -35,27 +33,29 @@ class GestorDocumentos {
 
   inicializar() {
     // Eventos de carga de archivos
-    this.entradaPDF.addEventListener('change', (e) => this.manejarSeleccionArchivo(e));
-    this.areaSubida.addEventListener('dragover', (e) => this.manejarDragOver(e));
-    this.areaSubida.addEventListener('drop', (e) => this.manejarDrop(e));
-    this.areaSubida.addEventListener('click', () => this.entradaPDF.click());
+    if (this.entradaPDF) this.entradaPDF.addEventListener('change', (e) => this.manejarSeleccionArchivo(e));
+    if (this.areaSubida) {
+      this.areaSubida.addEventListener('dragover', (e) => this.manejarDragOver(e));
+      this.areaSubida.addEventListener('drop', (e) => this.manejarDrop(e));
+      this.areaSubida.addEventListener('click', () => this.entradaPDF && this.entradaPDF.click());
+    }
 
     // Eventos de botones
-    this.btnSubir.addEventListener('click', () => this.subirArchivo());
-    this.btnEliminar.addEventListener('click', () => this.eliminarSeleccionados());
-    this.btnDocumentos.addEventListener('click', () => this.mostrarSeccionDocumentos());
-    this.btnVolverDocumentos.addEventListener('click', () => this.ocultarSeccionDocumentos());
-    this.btnGuardarNombre.addEventListener('click', () => this.guardarNombreDocumento());
-    this.btnImprimirQR.addEventListener('click', () => this.imprimirQR());
-    this.btnCerrarModal.addEventListener('click', () => this.cerrarModal());
-    this.btnImprimirModalQR.addEventListener('click', () => this.imprimirQRModal());
+    if (this.btnSubir) this.btnSubir.addEventListener('click', () => this.subirArchivo());
+    if (this.btnEliminar) this.btnEliminar.addEventListener('click', () => this.eliminarSeleccionados());
+    if (this.btnGuardarNombre) this.btnGuardarNombre.addEventListener('click', () => this.guardarNombreDocumento());
+    if (this.btnImprimirQR) this.btnImprimirQR.addEventListener('click', () => this.imprimirQR());
+    if (this.btnCerrarModal) this.btnCerrarModal.addEventListener('click', () => this.cerrarModal());
+    if (this.btnImprimirModalQR) this.btnImprimirModalQR.addEventListener('click', () => this.imprimirQRModal());
     
     // Cerrar modal al hacer clic fuera
-    this.modalPreview.addEventListener('click', (e) => {
-      if (e.target === this.modalPreview) {
-        this.cerrarModal();
-      }
-    });
+    if (this.modalPreview) {
+      this.modalPreview.addEventListener('click', (e) => {
+        if (e.target === this.modalPreview) {
+          this.cerrarModal();
+        }
+      });
+    }
 
     // Cargar documentos al inicializar
     this.cargarLista();
@@ -196,7 +196,7 @@ class GestorDocumentos {
 
   generarQR(doc) {
     // Limpiar QR anterior
-    this.qrContainer.innerHTML = '';
+    this.contenedorQR.innerHTML = '';
 
     // Preparar datos para el QR
     const qrData = JSON.stringify({
@@ -207,7 +207,7 @@ class GestorDocumentos {
     });
 
     // Generar QR
-    new QRCode(this.qrContainer, {
+    new QRCode(this.contenedorQR, {
       text: qrData,
       width: 256,
       height: 256,
@@ -217,9 +217,9 @@ class GestorDocumentos {
     });
 
     // Actualizar información del QR
-    this.qrTitulo.textContent = doc.nombre;
-    this.qrToken.textContent = doc.token;
-    this.nombreDocumentoEdit.value = doc.nombre;
+    this.tituloQR.textContent = doc.nombre;
+    this.tokenQR.textContent = doc.token;
+    if (this.nombreDocumentoEditar) this.nombreDocumentoEditar.value = doc.nombre;
 
     // Mostrar sección de QR
     this.seccionQR.classList.remove('oculta');
@@ -240,7 +240,7 @@ class GestorDocumentos {
       return;
     }
 
-    const nuevoNombre = this.nombreDocumentoEdit.value.trim();
+    const nuevoNombre = this.nombreDocumentoEditar ? this.nombreDocumentoEditar.value.trim() : '';
 
     if (!nuevoNombre) {
       this.mostrarMensaje('El nombre no puede estar vacío', 'error');
@@ -276,7 +276,7 @@ class GestorDocumentos {
       const printWindow = window.open('', '', 'height=800,width=600');
 
       // Obtener la imagen del QR
-      const qrImage = this.qrContainer.querySelector('img').src;
+      const qrImage = this.contenedorQR.querySelector('img').src;
 
       printWindow.document.write(`
         <!DOCTYPE html>
