@@ -7,6 +7,16 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
+  <!-- Barra de Navegación Superior -->
+  <nav class="navbar">
+    <div class="navbar-contenido">
+      <div class="navbar-logo">
+        <span class="logo-texto">Hospital</span>
+      </div>
+      <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+    </div>
+  </nav>
+
   <div class="panel-contenedor">
     <header class="panel-header">
       <h1>Panel de Usuario</h1>
@@ -21,7 +31,7 @@
     <!-- Sección de Documentos -->
     <div id="seccionDocumentos" class="seccion-documentos oculta">
       <div class="doc-header">
-        <button class="btn-volver" id="btnVolverDocumentos">&larr; Volver</button>
+        <button class="btn-volver" id="btnVolverDocumentos">Volver</button>
         <h2>Gestión de Documentos</h2>
       </div>
 
@@ -32,7 +42,6 @@
           <div class="upload-area" id="uploadArea">
             <input type="file" id="inputPDF" accept=".pdf" style="display: none;" />
             <label for="inputPDF" class="upload-label">
-              <span class="upload-icon">📄</span>
               <span>Haz clic o arrastra un PDF aquí</span>
             </label>
           </div>
@@ -41,8 +50,8 @@
 
         <!-- Botones de acciones -->
         <div class="doc-acciones">
-          <button class="btn-accion btn-subir" id="btnSubir">📤 Subir</button>
-          <button class="btn-accion btn-eliminar" id="btnEliminar">🗑️ Eliminar Seleccionados</button>
+          <button class="btn-accion btn-subir" id="btnSubir">Subir</button>
+          <button class="btn-accion btn-eliminar" id="btnEliminar">Eliminar Seleccionados</button>
         </div>
 
         <!-- Lista de documentos -->

@@ -122,7 +122,7 @@ class GestorDocumentos {
           <span class="doc-nombre">${this.escaparHTML(doc.nombre)}</span>
           <span class="doc-fecha">${doc.fecha}</span>
         </div>
-        <button class="btn-vista-previa" data-id="${doc.id}">👁️ Ver</button>
+        <button class="btn-vista-previa" data-id="${doc.id}">Ver</button>
       </div>
     `).join('');
 
@@ -216,7 +216,21 @@ class GestorDocumentos {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     new GestorDocumentos();
+    inicializarLogout();
   });
 } else {
   new GestorDocumentos();
+  inicializarLogout();
+}
+
+// Función para cerrar sesión
+function inicializarLogout() {
+  const btnLogout = document.getElementById('btnLogout');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        window.location.href = '../index.html';
+      }
+    });
+  }
 }

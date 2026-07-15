@@ -19,26 +19,80 @@ body {
   min-height: 100vh;
   background: linear-gradient(135deg, #e9f1fb 0%, #f5fbff 100%);
   display: flex;
+  flex-direction: column;
+  color: var(--principal);
+  padding-top: 70px;
+}
+
+/* Barra de Navegación */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(135deg, var(--principal), var(--secundario));
+  box-shadow: 0 4px 12px rgba(24, 78, 119, 0.15);
+  z-index: 1000;
+  display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+}
+
+.navbar-contenido {
+  width: min(80%, 1400px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--claro);
+}
+
+.logo-texto {
+  letter-spacing: 0.5px;
+}
+
+.btn-logout {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid var(--claro);
+  border-radius: 8px;
+  color: var(--claro);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.btn-logout:hover {
+  background: var(--claro);
   color: var(--principal);
+  transform: translateY(-2px);
 }
 
 .container {
-  width: min(420px, 100%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  flex: 1;
+}
+
+.container > div {
+  width: min(80%, 600px);
   background: rgba(255, 255, 255, 0.96);
   border-radius: 24px;
   box-shadow: 0 18px 45px rgba(6, 24, 69, 0.12);
   overflow: hidden;
   border: 1px solid rgba(29, 53, 87, 0.08);
-}
-
-.header {
-  padding: 32px 28px 20px;
-  background: linear-gradient(135deg, var(--principal), var(--secundario));
-  color: var(--claro);
-  text-align: center;
 }
 
 .header h1 {
@@ -85,15 +139,6 @@ body {
   outline: none;
   border-color: var(--secundario);
   box-shadow: 0 0 0 4px rgba(61, 165, 217, 0.14);
-}
-
-.input-group span {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.95rem;
-  color: var(--gris);
 }
 
 .actions {
@@ -170,13 +215,14 @@ body {
 }
 
 .panel-contenedor {
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 24px;
-  background: linear-gradient(135deg, #e9f1fb 0%, #f5fbff 100%);
+  background: transparent;
+  width: 100%;
 }
 
 .panel-header {
@@ -185,7 +231,7 @@ body {
   border-radius: 24px;
   box-shadow: 0 16px 32px rgba(6, 24, 69, 0.12);
   padding: 28px;
-  width: min(520px, 100%);
+  width: min(80%, 1200px);
   margin-bottom: 24px;
 }
 
@@ -202,7 +248,7 @@ body {
 .panel-botones {
   display: flex;
   gap: 18px;
-  width: min(520px, 100%);
+  width: min(80%, 1200px);
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -231,7 +277,7 @@ body {
 
 /* Estilos para la sección de Documentos */
 .seccion-documentos {
-  width: min(800px, 100%);
+  width: min(80%, 1200px);
   background: rgba(255, 255, 255, 0.96);
   border-radius: 24px;
   box-shadow: 0 16px 32px rgba(6, 24, 69, 0.12);
@@ -335,11 +381,7 @@ body {
   cursor: pointer;
 }
 
-.upload-icon {
-  font-size: 2.5rem;
-}
-
-.upload-label span:last-child {
+.upload-label span {
   color: var(--principal);
   font-weight: 600;
 }
@@ -545,7 +587,89 @@ body {
   border-radius: 8px;
 }
 
+@media (max-width: 1024px) {
+  .navbar-contenido {
+    width: min(90%, 1400px);
+  }
+
+  .panel-header {
+    width: min(90%, 1200px);
+  }
+
+  .panel-botones {
+    width: min(90%, 1200px);
+  }
+
+  .seccion-documentos {
+    width: min(90%, 1200px);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    height: 60px;
+  }
+
+  body {
+    padding-top: 60px;
+  }
+
+  .navbar-logo span {
+    font-size: 1.2rem;
+  }
+
+  .btn-logout {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .panel-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .panel-botones {
+    width: 95%;
+    gap: 12px;
+  }
+
+  .boton-panel {
+    flex: 1 1 150px;
+    padding: 16px 20px;
+    font-size: 1rem;
+  }
+
+  .doc-header {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .doc-header h2 {
+    font-size: 1.2rem;
+  }
+}
+
 @media (max-width: 480px) {
+  .navbar {
+    height: 50px;
+  }
+
+  body {
+    padding-top: 50px;
+  }
+
+  .navbar-logo {
+    gap: 8px;
+  }
+
+  .logo-texto {
+    font-size: 1rem;
+  }
+
+  .btn-logout {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
   .header {
     padding: 24px 18px 18px;
   }
@@ -554,13 +678,33 @@ body {
     padding: 20px;
   }
 
+  .panel-header {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .panel-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .panel-header p {
+    font-size: 0.9rem;
+  }
+
   .panel-botones {
-    gap: 14px;
+    width: 95%;
+    gap: 12px;
     flex-direction: column;
   }
 
+  .boton-panel {
+    flex: 1 1 auto;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+  }
+
   .seccion-documentos {
-    width: 100%;
+    width: 95%;
   }
 
   .doc-contenido {
@@ -576,6 +720,15 @@ body {
   }
 
   .pdf-viewer {
-    height: 300px;
+    height: 250px;
+  }
+
+  .doc-lista {
+    max-height: 200px;
+  }
+
+  .btn-accion {
+    font-size: 0.9rem;
+    padding: 10px 14px;
   }
 }
