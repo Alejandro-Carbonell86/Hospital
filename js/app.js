@@ -57,7 +57,7 @@ formularioLogin.addEventListener('submit', function(evento) {
     const usuario = entradaUsuario.value.trim();
     const contrasena = entradaContrasena.value.trim();
 
-    if ((usuario === 'admin' || usuario === 'alejandro') && contrasena === 'hospital123') {
+    if (usuario === 'alejandro' && contrasena === 'alejandro') {
       window.location.href = 'pages/panel.html';
     } else {
       mostrarMensaje('Usuario o contraseña incorrectos. Revisa tus datos.', 'error');
