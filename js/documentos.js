@@ -21,6 +21,14 @@ class GestorDocumentos {
     this.btnImprimirQR = document.getElementById('btnImprimirQR');
     this.archivoSeleccionado = null;
     this.documentoActualSeleccionado = null;
+    this.modalPreview = document.getElementById('modalPreview');
+    this.btnCerrarModal = document.getElementById('btnCerrarModal');
+    this.modalPDFViewer = document.getElementById('modalPDFViewer');
+    this.modalQRContainer = document.getElementById('modalQRContainer');
+    this.modalQRTitulo = document.getElementById('modalQRTitulo');
+    this.modalQRToken = document.getElementById('modalQRToken');
+    this.btnImprimirModalQR = document.getElementById('btnImprimirModalQR');
+    this.documentoModalActual = null;
 
     this.inicializar();
   }
@@ -39,6 +47,15 @@ class GestorDocumentos {
     this.btnVolverDocumentos.addEventListener('click', () => this.ocultarSeccionDocumentos());
     this.btnGuardarNombre.addEventListener('click', () => this.guardarNombreDocumento());
     this.btnImprimirQR.addEventListener('click', () => this.imprimirQR());
+    this.btnCerrarModal.addEventListener('click', () => this.cerrarModal());
+    this.btnImprimirModalQR.addEventListener('click', () => this.imprimirQRModal());
+    
+    // Cerrar modal al hacer clic fuera
+    this.modalPreview.addEventListener('click', (e) => {
+      if (e.target === this.modalPreview) {
+        this.cerrarModal();
+      }
+    });
 
     // Cargar documentos al inicializar
     this.cargarLista();
@@ -142,9 +159,14 @@ class GestorDocumentos {
           <span class="doc-fecha">${doc.fecha}</span>
           <span class="doc-token">${doc.token}</span>
         </div>
+        <button class="btn-preview-modal" data-id="${doc.id}">Previsualizar</button>
         <button class="btn-vista-previa" data-id="${doc.id}">Ver</button>
       </div>
     `).join('');
+
+    this.listaDocumentos.querySelectorAll('.btn-preview-modal').forEach(btn => {
+      btn.addEventListener('click', () => this.abrirModalPreview(parseInt(btn.dataset.id)));
+    });
 
     this.listaDocumentos.querySelectorAll('.btn-vista-previa').forEach(btn => {
       btn.addEventListener('click', () => this.mostrarVistaPrevia(parseInt(btn.dataset.id)));
@@ -350,6 +372,133 @@ class GestorDocumentos {
       this.documentoActualSeleccionado = null;
       this.cargarLista();
     }
+  }
+
+  abrirModalPreview(id) {
+    const documentos = this.obtenerDocumentos();
+    const doc = documentos.find(d => d.id === id);
+
+    if (doc) {
+      this.documentoModalActual = doc;
+
+      // Cargar PDF
+      this.modalPDFViewer.src = doc.data;
+
+      // Generar QR en el modal
+      this.modalQRContainer.innerHTML = '';
+      const qrData = JSON.stringify({
+        token: doc.token,
+        nombre: doc.nombre,
+        fecha: doc.fecha,
+        id: doc.id
+      });
+
+      new QRCode(this.modalQRContainer, {
+        text: qrData,
+        width: 200,
+        height: 200,
+        colorDark: '#184e77',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      this.modalQRTitulo.textContent = doc.nombre;
+      this.modalQRToken.textContent = doc.token;
+
+      // Mostrar modal
+      this.modalPreview.classList.remove('oculta');
+    }
+  }
+
+  cerrarModal() {
+    this.modalPreview.classList.add('oculta');
+    this.modalPDFViewer.src = '';
+    this.modalQRContainer.innerHTML = '';
+    this.documentoModalActual = null;
+  }
+
+  imprimirQRModal() {
+    if (!this.documentoModalActual) {
+      return;
+    }
+
+    const doc = this.documentoModalActual;
+    const printWindow = window.open('', '', 'height=800,width=600');
+
+    // Obtener la imagen del QR
+    const qrImage = this.modalQRContainer.querySelector('img').src;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Código QR - ${this.escaparHTML(doc.nombre)}</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+              margin: 0;
+              background: #f5f5f5;
+            }
+            .qr-print {
+              background: white;
+              padding: 40px;
+              border-radius: 8px;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+              text-align: center;
+              max-width: 600px;
+            }
+            h1 {
+              color: #184e77;
+              margin-bottom: 10px;
+              font-size: 1.8rem;
+            }
+            .token-info {
+              margin: 20px 0;
+              color: #666;
+              font-size: 0.9rem;
+            }
+            .qr-image {
+              margin: 30px 0;
+            }
+            .qr-image img {
+              max-width: 300px;
+              height: auto;
+            }
+            .fecha-info {
+              color: #999;
+              font-size: 0.85rem;
+              margin-top: 20px;
+            }
+            @media print {
+              body {
+                background: white;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="qr-print">
+            <h1>${this.escaparHTML(doc.nombre)}</h1>
+            <div class="token-info">
+              <strong>Token:</strong> ${doc.token}
+            </div>
+            <div class="qr-image">
+              <img src="${qrImage}" alt="Código QR">
+            </div>
+            <div class="fecha-info">
+              Generado: ${doc.fecha}
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.print();
   }
 
   mostrarSeccionDocumentos() {

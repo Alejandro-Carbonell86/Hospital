@@ -694,6 +694,289 @@ body {
   margin-top: 4px;
 }
 
+.btn-preview-modal {
+  padding: 6px 12px;
+  background: #2a9d8f;
+  border: none;
+  border-radius: 6px;
+  color: var(--claro);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  margin-right: 4px;
+}
+
+.btn-preview-modal:hover {
+  background: #1e7f6f;
+}
+
+/* Modal de Vista Previa */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal.oculta {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-contenedor {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-cerrar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--gris);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.modal-cerrar:hover {
+  background: #f0f0f0;
+  color: var(--principal);
+}
+
+.modal-contenido {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.modal-pdf {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e2e8f0;
+  padding-right: 20px;
+}
+
+.modal-pdf-viewer {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.modal-qr {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px;
+}
+
+.modal-qr h3 {
+  color: var(--principal);
+  margin-bottom: 16px;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.modal-qr-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.modal-qr-container img {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+  background: white;
+  max-width: 100%;
+}
+
+.modal-qr-info {
+  font-size: 0.8rem;
+  color: var(--gris);
+  text-align: center;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.modal-qr-info span {
+  font-family: monospace;
+  color: var(--principal);
+  font-weight: 600;
+  display: block;
+}
+
+.btn-imprimir-modal-qr {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--secundario);
+  border: none;
+  border-radius: 8px;
+  color: var(--claro);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btn-imprimir-modal-qr:hover {
+  background: #2d89b8;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1024px) {
+  .modal-contenedor {
+    max-width: 95%;
+  }
+
+  .modal-contenido {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-pdf {
+    flex: 1;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding-right: 0;
+    padding-bottom: 16px;
+  }
+
+  .modal-qr {
+    flex: 1;
+    padding: 12px 0;
+  }
+
+  .modal-pdf-viewer {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+  }
+
+  .modal-contenedor {
+    max-width: 100%;
+  }
+
+  .modal-contenido {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .modal-cerrar {
+    top: 8px;
+    right: 8px;
+    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+  }
+
+  .modal-pdf-viewer {
+    min-height: 300px;
+  }
+
+  .modal-qr-container img {
+    max-width: 150px;
+  }
+
+  .modal-qr-info {
+    font-size: 0.75rem;
+  }
+
+  .btn-imprimir-modal-qr {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 5px;
+  }
+
+  .modal-contenedor {
+    border-radius: 12px;
+  }
+
+  .modal-contenido {
+    padding: 8px;
+  }
+
+  .modal-pdf {
+    padding-right: 0;
+    padding-bottom: 8px;
+  }
+
+  .modal-qr {
+    padding: 8px 0;
+  }
+
+  .modal-pdf-viewer {
+    min-height: 250px;
+  }
+
+  .modal-qr-container img {
+    max-width: 120px;
+  }
+}
+
 @media (max-width: 1024px) {
   .navbar-contenido {
     width: min(90%, 1400px);

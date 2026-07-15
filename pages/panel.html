@@ -84,6 +84,27 @@
             <button id="btnImprimirQR" class="btn-imprimir-qr">Imprimir QR</button>
           </div>
         </div>
+
+        <!-- Modal de Vista Previa -->
+        <div id="modalPreview" class="modal oculta">
+          <div class="modal-contenedor">
+            <button class="modal-cerrar" id="btnCerrarModal">&times;</button>
+            <div class="modal-contenido">
+              <div class="modal-pdf">
+                <iframe id="modalPDFViewer" src="" type="application/pdf" class="modal-pdf-viewer"></iframe>
+              </div>
+              <div class="modal-qr">
+                <h3 id="modalQRTitulo">Documento</h3>
+                <div id="modalQRContainer" class="modal-qr-container"></div>
+                <p class="modal-qr-info">
+                  <strong>Token:</strong> <br>
+                  <span id="modalQRToken">-</span>
+                </p>
+                <button id="btnImprimirModalQR" class="btn-imprimir-modal-qr">Imprimir QR</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
