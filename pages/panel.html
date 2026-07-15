@@ -13,10 +13,58 @@
       <p>Selecciona la acción que necesitas realizar.</p>
     </header>
 
-    <main class="panel-botones">
-      <a class="boton-panel" href="#">Documentos</a>
+    <main class="panel-botones" id="panelMenu">
+      <button class="boton-panel" id="btnDocumentos">Documentos</button>
       <a class="boton-panel" href="#">Traslados</a>
     </main>
+
+    <!-- Sección de Documentos -->
+    <div id="seccionDocumentos" class="seccion-documentos oculta">
+      <div class="doc-header">
+        <button class="btn-volver" id="btnVolverDocumentos">&larr; Volver</button>
+        <h2>Gestión de Documentos</h2>
+      </div>
+
+      <div class="doc-contenido">
+        <!-- Área de carga -->
+        <div class="doc-upload-section">
+          <h3>Subir Documento PDF</h3>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="inputPDF" accept=".pdf" style="display: none;" />
+            <label for="inputPDF" class="upload-label">
+              <span class="upload-icon">📄</span>
+              <span>Haz clic o arrastra un PDF aquí</span>
+            </label>
+          </div>
+          <div id="uploadMessage" class="upload-message"></div>
+        </div>
+
+        <!-- Botones de acciones -->
+        <div class="doc-acciones">
+          <button class="btn-accion btn-subir" id="btnSubir">📤 Subir</button>
+          <button class="btn-accion btn-eliminar" id="btnEliminar">🗑️ Eliminar Seleccionados</button>
+        </div>
+
+        <!-- Lista de documentos -->
+        <div class="doc-lista-section">
+          <h3>Documentos Guardados</h3>
+          <div class="doc-lista" id="listaDocumentos">
+            <p class="sin-documentos">No hay documentos guardados</p>
+          </div>
+        </div>
+
+        <!-- Vista previa -->
+        <div class="doc-preview-section">
+          <h3>Vista Previa</h3>
+          <div class="doc-preview" id="vistaPrevia">
+            <p class="sin-preview">Selecciona un documento para ver la vista previa</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/documentos.js"></script>
 </body>
 </html>
