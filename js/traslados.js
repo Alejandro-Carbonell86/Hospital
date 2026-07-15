@@ -1,5 +1,10 @@
 // Manejo de traslados usando localStorage
 const LS_KEY = 'traslados'
+let currentEditId = ''
+let map = null
+let mapMode = 'origin' // 'origin' or 'dest'
+let originMarker = null
+let destMarker = null
 
 function cargarTraslados() {
   const raw = localStorage.getItem(LS_KEY) || '[]'
@@ -41,10 +46,50 @@ function renderLista() {
 }
 
 function abrirForm() {
+  currentEditId = ''
+  document.getElementById('formTitulo').textContent = 'Nuevo Traslado'
+  document.getElementById('currentEditId').value = ''
   document.getElementById('seccionForm').classList.remove('oculta')
+  setTimeout(() => { if (map) map.invalidateSize() }, 200)
+}
+
+function abrirFormEdicion(traslado) {
+  currentEditId = traslado.id
+  document.getElementById('formTitulo').textContent = 'Editar Traslado — Iniciado'
+  document.getElementById('currentEditId').value = traslado.id
+  document.getElementById('inputPaciente').value = traslado.paciente
+  document.getElementById('inputOrigen').value = traslado.origen
+  document.getElementById('inputDestino').value = traslado.destino
+  document.getElementById('inputNotas').value = traslado.notas || ''
+  if (traslado.origenCoord) {
+    document.getElementById('inputLatOrigin').value = traslado.origenCoord.lat
+    document.getElementById('inputLngOrigin').value = traslado.origenCoord.lng
+  }
+  if (traslado.destinoCoord) {
+    document.getElementById('inputLatDest').value = traslado.destinoCoord.lat
+    document.getElementById('inputLngDest').value = traslado.destinoCoord.lng
+  }
+  document.getElementById('seccionForm').classList.remove('oculta')
+  setTimeout(() => {
+    if (map) {
+      map.invalidateSize()
+      if (traslado.origenCoord) {
+        if (originMarker) map.removeLayer(originMarker)
+        originMarker = L.marker([traslado.origenCoord.lat, traslado.origenCoord.lng]).addTo(map).bindPopup('Origen')
+      }
+      if (traslado.destinoCoord) {
+        if (destMarker) map.removeLayer(destMarker)
+        destMarker = L.marker([traslado.destinoCoord.lat, traslado.destinoCoord.lng]).addTo(map).bindPopup('Destino')
+      }
+      if (traslado.origenCoord) map.setView([traslado.origenCoord.lat, traslado.origenCoord.lng], 13)
+    }
+  }, 200)
 }
 
 function cerrarForm() {
+  currentEditId = ''
+  document.getElementById('formTraslado').reset()
+  document.getElementById('currentEditId').value = ''
   document.getElementById('seccionForm').classList.add('oculta')
 }
 
@@ -52,7 +97,18 @@ function añadirEventoLista(e) {
   const id = e.target.dataset.id
   if (!id) return
   if (e.target.classList.contains('btn-ver')) viewTraslado(id)
-  if (e.target.classList.contains('btn-iniciar')) cambiarEstado(id, 'en curso')
+  if (e.target.classList.contains('btn-iniciar')) {
+    const list = cargarTraslados()
+    const t = list.find(x => x.id === id)
+    if (!t) return
+    // marcar traslado como en curso y abrir formulario para completar datos
+    t.estado = 'en curso'
+    t.historial = t.historial || []
+    t.historial.push({ estado: 'en curso', fecha: new Date().toISOString() })
+    guardarTraslados(list)
+    abrirFormEdicion(t)
+    renderLista()
+  }
   if (e.target.classList.contains('btn-finalizar')) cambiarEstado(id, 'finalizado')
 }
 
@@ -101,14 +157,63 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnNuevoTraslado').addEventListener('click', abrirForm)
   document.getElementById('btnCerrarForm').addEventListener('click', (e) => { e.preventDefault(); cerrarForm() })
 
+  // Inicializar mapa Leaflet
+  try {
+    map = L.map('map').setView([0, 0], 2)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map)
+    map.on('click', (ev) => {
+      const lat = ev.latlng.lat
+      const lng = ev.latlng.lng
+      if (mapMode === 'origin') {
+        if (originMarker) map.removeLayer(originMarker)
+        originMarker = L.marker([lat, lng]).addTo(map).bindPopup('Origen').openPopup()
+        document.getElementById('inputLatOrigin').value = lat
+        document.getElementById('inputLngOrigin').value = lng
+      } else {
+        if (destMarker) map.removeLayer(destMarker)
+        destMarker = L.marker([lat, lng]).addTo(map).bindPopup('Destino').openPopup()
+        document.getElementById('inputLatDest').value = lat
+        document.getElementById('inputLngDest').value = lng
+      }
+    })
+  } catch (err) {
+    console.warn('Leaflet no pudo inicializarse:', err)
+  }
+
+  document.getElementById('btnSetOrigin').addEventListener('click', () => { mapMode = 'origin' })
+  document.getElementById('btnSetDest').addEventListener('click', () => { mapMode = 'dest' })
+
   document.getElementById('formTraslado').addEventListener('submit', (e) => {
     e.preventDefault()
     const paciente = document.getElementById('inputPaciente').value.trim()
     const origen = document.getElementById('inputOrigen').value.trim()
     const destino = document.getElementById('inputDestino').value.trim()
     const notas = document.getElementById('inputNotas').value.trim()
+    const latO = document.getElementById('inputLatOrigin').value
+    const lngO = document.getElementById('inputLngOrigin').value
+    const latD = document.getElementById('inputLatDest').value
+    const lngD = document.getElementById('inputLngDest').value
     if (!paciente || !origen || !destino) return alert('Complete los campos obligatorios')
     const list = cargarTraslados()
+    if (currentEditId) {
+      const t = list.find(x => x.id === currentEditId)
+      if (!t) return
+      t.paciente = paciente
+      t.origen = origen
+      t.destino = destino
+      t.notas = notas
+      if (latO && lngO) t.origenCoord = { lat: parseFloat(latO), lng: parseFloat(lngO) }
+      if (latD && lngD) t.destinoCoord = { lat: parseFloat(latD), lng: parseFloat(lngD) }
+      t.historial = t.historial || []
+      t.historial.push({ estado: 'datos actualizados', fecha: new Date().toISOString() })
+      guardarTraslados(list)
+      cerrarForm()
+      renderLista()
+      return
+    }
     const nuevo = {
       id: crearId(),
       paciente, origen, destino, notas,
@@ -116,6 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
       creado: new Date().toISOString(),
       historial: [{ estado: 'pendiente', fecha: new Date().toISOString() }]
     }
+    if (latO && lngO) nuevo.origenCoord = { lat: parseFloat(latO), lng: parseFloat(lngO) }
+    if (latD && lngD) nuevo.destinoCoord = { lat: parseFloat(latD), lng: parseFloat(lngD) }
     list.push(nuevo)
     guardarTraslados(list)
     cerrarForm()

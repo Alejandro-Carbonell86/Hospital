@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Traslados - Software Hospital</title>
   <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2H6kR0rXv8gqk0qk3VQxQ0Z0v4v0W+g6bM6i/tA=" crossorigin=""/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-QVb8+1gQb5p0y2qvQbJv3a7l2bG3k9YfYfYz4b6v9wY=" crossorigin=""></script>
 </head>
 <body>
   <nav class="navbar">
@@ -31,13 +33,24 @@
       <section id="seccionForm" class="oculta">
         <div class="doc-header">
           <button class="btn-volver" id="btnCerrarForm">Cancelar</button>
-          <h2>Nuevo Traslado</h2>
+          <h2 id="formTitulo">Nuevo Traslado</h2>
         </div>
         <form id="formTraslado">
+          <input type="hidden" id="currentEditId" value="">
           <label>Paciente: <input type="text" id="inputPaciente" required></label>
           <label>Origen: <input type="text" id="inputOrigen" required></label>
           <label>Destino: <input type="text" id="inputDestino" required></label>
           <label>Notas: <input type="text" id="inputNotas"></label>
+          <div class="map-frame">
+            <p>Haz click en el mapa para establecer la ubicación (origen/destino según selección).</p>
+            <div id="map" style="height:280px;border:1px solid #ccc;margin-bottom:8px"></div>
+            <button type="button" id="btnSetOrigin" class="btn-accion">Marcar Origen</button>
+            <button type="button" id="btnSetDest" class="btn-accion">Marcar Destino</button>
+          </div>
+          <input type="hidden" id="inputLatOrigin">
+          <input type="hidden" id="inputLngOrigin">
+          <input type="hidden" id="inputLatDest">
+          <input type="hidden" id="inputLngDest">
           <button type="submit" class="btn-accion">Guardar Traslado</button>
         </form>
       </section>
