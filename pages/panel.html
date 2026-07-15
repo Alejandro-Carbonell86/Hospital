@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel - Software Hospital</title>
   <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
   <!-- Barra de Navegación Superior -->
@@ -64,9 +65,23 @@
 
         <!-- Vista previa -->
         <div class="doc-preview-section">
-          <h3>Vista Previa</h3>
+          <h3>Vista Previa y Código QR</h3>
           <div class="doc-preview" id="vistaPrevia">
             <p class="sin-preview">Selecciona un documento para ver la vista previa</p>
+          </div>
+        </div>
+
+        <!-- Sección de QR para impresión -->
+        <div id="seccionQR" class="qr-print-section oculta">
+          <div class="qr-print-contenedor">
+            <h3 id="qrTitulo">Documento</h3>
+            <div id="qrContainer" class="qr-container"></div>
+            <p class="qr-info">
+              <strong>Token:</strong> <span id="qrToken">-</span>
+            </p>
+            <input type="text" id="nombreDocumentoEdit" class="input-nombre-doc" placeholder="Nombre del documento" />
+            <button id="btnGuardarNombre" class="btn-guardar-nombre">Guardar Nombre</button>
+            <button id="btnImprimirQR" class="btn-imprimir-qr">Imprimir QR</button>
           </div>
         </div>
       </div>

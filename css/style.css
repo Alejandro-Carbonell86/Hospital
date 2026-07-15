@@ -587,6 +587,113 @@ body {
   border-radius: 8px;
 }
 
+/* Estilos para QR */
+.qr-print-section {
+  border-top: 2px solid #e2e8f0;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.qr-print-section.oculta {
+  display: none;
+}
+
+.qr-print-contenedor {
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  text-align: center;
+}
+
+.qr-print-contenedor h3 {
+  color: var(--principal);
+  margin-bottom: 16px;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.qr-container img {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+  background: white;
+}
+
+.qr-info {
+  margin: 16px 0;
+  font-size: 0.9rem;
+  color: var(--gris);
+}
+
+.qr-info span {
+  font-family: monospace;
+  color: var(--principal);
+  font-weight: 600;
+}
+
+.input-nombre-doc {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #d5e0eb;
+  background: #ffffff;
+  font-size: 0.95rem;
+  color: var(--principal);
+  margin: 12px 0;
+  transition: border-color 0.2s ease;
+}
+
+.input-nombre-doc:focus {
+  outline: none;
+  border-color: var(--secundario);
+  box-shadow: 0 0 0 3px rgba(61, 165, 217, 0.14);
+}
+
+.btn-guardar-nombre,
+.btn-imprimir-qr {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 8px 4px;
+}
+
+.btn-guardar-nombre {
+  background: var(--principal);
+  color: var(--claro);
+}
+
+.btn-guardar-nombre:hover {
+  background: #133f63;
+  transform: translateY(-2px);
+}
+
+.btn-imprimir-qr {
+  background: var(--secundario);
+  color: var(--claro);
+}
+
+.btn-imprimir-qr:hover {
+  background: #2d89b8;
+  transform: translateY(-2px);
+}
+
+.doc-token {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--secundario);
+  font-family: monospace;
+  margin-top: 4px;
+}
+
 @media (max-width: 1024px) {
   .navbar-contenido {
     width: min(90%, 1400px);
@@ -730,5 +837,24 @@ body {
   .btn-accion {
     font-size: 0.9rem;
     padding: 10px 14px;
+  }
+
+  .qr-container {
+    margin: 16px 0;
+  }
+
+  .qr-container img {
+    max-width: 200px;
+  }
+
+  .btn-guardar-nombre,
+  .btn-imprimir-qr {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  .input-nombre-doc {
+    font-size: 0.85rem;
   }
 }
