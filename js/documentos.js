@@ -1,9 +1,9 @@
 // Gestión de documentos PDF con QR
 class GestorDocumentos {
   constructor() {
-    this.storageKey = 'hospital_documentos';
-    this.inputPDF = document.getElementById('inputPDF');
-    this.uploadArea = document.getElementById('uploadArea');
+    this.claveAlmacenamiento = 'hospital_documentos';
+    this.entradaPDF = document.getElementById('inputPDF');
+    this.areaSubida = document.getElementById('uploadArea');
     this.btnSubir = document.getElementById('btnSubir');
     this.btnEliminar = document.getElementById('btnEliminar');
     this.btnDocumentos = document.getElementById('btnDocumentos');
@@ -11,7 +11,7 @@ class GestorDocumentos {
     this.listaDocumentos = document.getElementById('listaDocumentos');
     this.vistaPrevia = document.getElementById('vistaPrevia');
     this.seccionDocumentos = document.getElementById('seccionDocumentos');
-    this.uploadMessage = document.getElementById('uploadMessage');
+    this.mensajeSubida = document.getElementById('uploadMessage');
     this.seccionQR = document.getElementById('seccionQR');
     this.qrContainer = document.getElementById('qrContainer');
     this.qrTitulo = document.getElementById('qrTitulo');
@@ -35,10 +35,10 @@ class GestorDocumentos {
 
   inicializar() {
     // Eventos de carga de archivos
-    this.inputPDF.addEventListener('change', (e) => this.manejarSeleccionArchivo(e));
-    this.uploadArea.addEventListener('dragover', (e) => this.manejarDragOver(e));
-    this.uploadArea.addEventListener('drop', (e) => this.manejarDrop(e));
-    this.uploadArea.addEventListener('click', () => this.inputPDF.click());
+    this.entradaPDF.addEventListener('change', (e) => this.manejarSeleccionArchivo(e));
+    this.areaSubida.addEventListener('dragover', (e) => this.manejarDragOver(e));
+    this.areaSubida.addEventListener('drop', (e) => this.manejarDrop(e));
+    this.areaSubida.addEventListener('click', () => this.entradaPDF.click());
 
     // Eventos de botones
     this.btnSubir.addEventListener('click', () => this.subirArchivo());
@@ -71,13 +71,13 @@ class GestorDocumentos {
   manejarDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
-    this.uploadArea.classList.add('dragover');
+    this.areaSubida.classList.add('dragover');
   }
 
   manejarDrop(e) {
     e.preventDefault();
     e.stopPropagation();
-    this.uploadArea.classList.remove('dragover');
+    this.areaSubida.classList.remove('dragover');
 
     const archivos = e.dataTransfer.files;
     if (archivos.length > 0) {
@@ -103,7 +103,7 @@ class GestorDocumentos {
 
     this.archivoSeleccionado = archivo;
     this.mostrarMensaje(`Archivo seleccionado: ${archivo.name}`, 'success');
-    this.uploadArea.classList.add('archivo-seleccionado');
+    this.areaSubida.classList.add('archivo-seleccionado');
     document.querySelector('.upload-label span').textContent = archivo.name;
   }
 
@@ -133,7 +133,7 @@ class GestorDocumentos {
       };
 
       documentos.push(nuevoDoc);
-      localStorage.setItem(this.storageKey, JSON.stringify(documentos));
+      localStorage.setItem(this.claveAlmacenamiento, JSON.stringify(documentos));
 
       this.mostrarMensaje(`Archivo "${nuevoDoc.nombre}" subido correctamente`, 'success');
       this.limpiarForm();
@@ -189,8 +189,8 @@ class GestorDocumentos {
         </div>
       `;
 
-      // Generar y mostrar QR
-      this.generarQR(doc);
+        // Generar y mostrar QR
+        this.generarQR(doc);
     }
   }
 
@@ -230,7 +230,7 @@ class GestorDocumentos {
     const docIndex = documentos.findIndex(d => d.id === doc.id);
     if (docIndex !== -1) {
       documentos[docIndex].qrData = qrData;
-      localStorage.setItem(this.storageKey, JSON.stringify(documentos));
+      localStorage.setItem(this.claveAlmacenamiento, JSON.stringify(documentos));
     }
   }
 
@@ -252,7 +252,7 @@ class GestorDocumentos {
 
     if (doc) {
       doc.nombre = nuevoNombre;
-      localStorage.setItem(this.storageKey, JSON.stringify(documentos));
+      localStorage.setItem(this.claveAlmacenamiento, JSON.stringify(documentos));
 
       this.mostrarMensaje(`Nombre actualizado a: ${nuevoNombre}`, 'success');
 
@@ -365,7 +365,7 @@ class GestorDocumentos {
       let documentos = this.obtenerDocumentos();
       documentos = documentos.filter(doc => !idsAEliminar.includes(doc.id));
 
-      localStorage.setItem(this.storageKey, JSON.stringify(documentos));
+      localStorage.setItem(this.claveAlmacenamiento, JSON.stringify(documentos));
       this.mostrarMensaje(`${idsAEliminar.length} documento(s) eliminado(s)`, 'success');
       this.vistaPrevia.innerHTML = '<p class="sin-preview">Selecciona un documento para ver la vista previa</p>';
       this.seccionQR.classList.add('oculta');
@@ -514,27 +514,27 @@ class GestorDocumentos {
   }
 
   limpiarForm() {
-    this.inputPDF.value = '';
+    this.entradaPDF.value = '';
     this.archivoSeleccionado = null;
-    this.uploadArea.classList.remove('archivo-seleccionado');
+    this.areaSubida.classList.remove('archivo-seleccionado');
     document.querySelector('.upload-label span').textContent = 'Haz clic o arrastra un PDF aquí';
-    this.uploadMessage.textContent = '';
-    this.uploadMessage.className = 'upload-message';
+    this.mensajeSubida.textContent = '';
+    this.mensajeSubida.className = 'upload-message';
   }
 
   obtenerDocumentos() {
-    const datos = localStorage.getItem(this.storageKey);
+    const datos = localStorage.getItem(this.claveAlmacenamiento);
     return datos ? JSON.parse(datos) : [];
   }
 
   mostrarMensaje(texto, tipo) {
-    this.uploadMessage.textContent = texto;
-    this.uploadMessage.className = `upload-message ${tipo}`;
+    this.mensajeSubida.textContent = texto;
+    this.mensajeSubida.className = `upload-message ${tipo}`;
 
     if (tipo === 'success') {
       setTimeout(() => {
-        this.uploadMessage.textContent = '';
-        this.uploadMessage.className = 'upload-message';
+        this.mensajeSubida.textContent = '';
+        this.mensajeSubida.className = 'upload-message';
       }, 3000);
     }
   }
@@ -550,21 +550,31 @@ class GestorDocumentos {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     new GestorDocumentos();
-    inicializarLogout();
+    inicializarCerrarSesion();
   });
 } else {
   new GestorDocumentos();
-  inicializarLogout();
+  inicializarCerrarSesion();
 }
 
-// Función para cerrar sesión
-function inicializarLogout() {
+// Inicializar comportamiento del botón de cerrar sesión
+function inicializarCerrarSesion() {
   const btnLogout = document.getElementById('btnLogout');
-  if (btnLogout) {
-    btnLogout.addEventListener('click', () => {
-      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        window.location.href = '../index.html';
-      }
-    });
-  }
+  if (!btnLogout) return;
+
+  btnLogout.addEventListener('click', () => {
+    const seccion = document.getElementById('seccionDocumentos');
+    // Si la sección de documentos está visible, volver a la vista principal (Documentos/Traslados)
+    if (seccion && !seccion.classList.contains('oculta')) {
+      seccion.classList.add('oculta')
+      document.querySelector('.panel-botones').style.display = 'flex'
+      document.querySelector('.panel-header').style.display = 'block'
+      return
+    }
+
+    // Si no, proceder con logout normal
+    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+      window.location.href = '../index.html';
+    }
+  })
 }
