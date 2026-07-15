@@ -38,8 +38,18 @@
         <form id="formTraslado">
           <input type="hidden" id="idEdicionActual" value="">
           <label>Paciente: <input type="text" id="entradaPaciente" required></label>
-          <label>Origen: <input type="text" id="entradaOrigen" required></label>
-          <label>Destino: <input type="text" id="entradaDestino" required></label>
+          <label>Origen: 
+            <div class="input-group">
+              <input type="text" id="entradaOrigen" autocomplete="off" required>
+              <div class="sugerencias-lista oculta" id="sugerenciasOrigen"></div>
+            </div>
+          </label>
+          <label>Destino: 
+            <div class="input-group">
+              <input type="text" id="entradaDestino" autocomplete="off" required>
+              <div class="sugerencias-lista oculta" id="sugerenciasDestino"></div>
+            </div>
+          </label>
           <label>Notas: <input type="text" id="notasTraslado"></label>
           <div class="map-frame">
             <p>Haz click en el mapa para establecer la ubicación (origen/destino según selección).</p>

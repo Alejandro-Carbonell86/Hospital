@@ -19,6 +19,79 @@ function crearId() {
   return 't-' + Date.now()
 }
 
+// Debounce utility
+function debounce(fn, delay) {
+  let t
+  return function (...args) {
+    clearTimeout(t)
+    t = setTimeout(() => fn.apply(this, args), delay)
+  }
+}
+
+// Buscar direcciones usando Nominatim (OpenStreetMap)
+async function buscarDirecciones(q) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(q)}`
+  try {
+    const res = await fetch(url, { headers: { 'Accept-Language': 'es' } })
+    if (!res.ok) return []
+    const data = await res.json()
+    return data.map(d => ({ display_name: d.display_name, lat: parseFloat(d.lat), lon: parseFloat(d.lon) }))
+  } catch (err) {
+    console.warn('Error buscando direcciones:', err)
+    return []
+  }
+}
+
+function limpiarSugerencias(contenedor) {
+  if (!contenedor) return
+  contenedor.innerHTML = ''
+  contenedor.classList.add('oculta')
+}
+
+function mostrarSugerencias(contenedor, results, tipo) {
+  if (!contenedor) return
+  contenedor.innerHTML = ''
+  if (!results || !results.length) {
+    contenedor.classList.add('oculta')
+    return
+  }
+  results.forEach(r => {
+    const el = document.createElement('div')
+    el.className = 'sugerencia-item'
+    el.textContent = r.display_name
+    el.addEventListener('click', () => {
+      aplicarSugerencia(r, tipo)
+    })
+    contenedor.appendChild(el)
+  })
+  contenedor.classList.remove('oculta')
+}
+
+function aplicarSugerencia(resultado, tipo) {
+  if (!resultado) return
+  if (tipo === 'origen') {
+    const inp = document.getElementById('entradaOrigen'); if (inp) inp.value = resultado.display_name
+    const lat = document.getElementById('entradaLatOrigen'); if (lat) lat.value = resultado.lat
+    const lng = document.getElementById('entradaLngOrigen'); if (lng) lng.value = resultado.lon
+    if (marcadorOrigen) mapa.removeLayer(marcadorOrigen)
+    try {
+      marcadorOrigen = L.marker([resultado.lat, resultado.lon]).addTo(mapa).bindPopup('Origen').openPopup()
+      mapa.setView([resultado.lat, resultado.lon], 14)
+    } catch (e) {}
+    limpiarSugerencias(document.getElementById('sugerenciasOrigen'))
+  } else {
+    const inp = document.getElementById('entradaDestino'); if (inp) inp.value = resultado.display_name
+    const lat = document.getElementById('entradaLatDestino'); if (lat) lat.value = resultado.lat
+    const lng = document.getElementById('entradaLngDestino'); if (lng) lng.value = resultado.lon
+    if (marcadorDestino) mapa.removeLayer(marcadorDestino)
+    try {
+      marcadorDestino = L.marker([resultado.lat, resultado.lon]).addTo(mapa).bindPopup('Destino').openPopup()
+      mapa.setView([resultado.lat, resultado.lon], 14)
+    } catch (e) {}
+    limpiarSugerencias(document.getElementById('sugerenciasDestino'))
+  }
+}
+
 function renderizarLista() {
   const cont = document.getElementById('listaTraslados')
   const list = cargarTraslados()
@@ -232,4 +305,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('listaTraslados').addEventListener('click', manejarEventoLista)
   document.getElementById('btnCerrarDetalle').addEventListener('click', cerrarDetalle)
+
+  // Autocomplete de direcciones (entradaOrigen / entradaDestino)
+  const entradaOrigen = document.getElementById('entradaOrigen')
+  const entradaDestino = document.getElementById('entradaDestino')
+  const sugerenciasOrigen = document.getElementById('sugerenciasOrigen')
+  const sugerenciasDestino = document.getElementById('sugerenciasDestino')
+
+  const buscarYMostrar = async (q, cont, tipo) => {
+    if (!q || q.length < 3) { limpiarSugerencias(cont); return }
+    const resultados = await buscarDirecciones(q)
+    mostrarSugerencias(cont, resultados, tipo)
+  }
+
+  const debBuscarOrigen = debounce((ev) => buscarYMostrar(ev.target.value, sugerenciasOrigen, 'origen'), 350)
+  const debBuscarDestino = debounce((ev) => buscarYMostrar(ev.target.value, sugerenciasDestino, 'destino'), 350)
+
+  if (entradaOrigen) {
+    entradaOrigen.addEventListener('input', debBuscarOrigen)
+    entradaOrigen.addEventListener('blur', () => setTimeout(() => limpiarSugerencias(sugerenciasOrigen), 200))
+  }
+  if (entradaDestino) {
+    entradaDestino.addEventListener('input', debBuscarDestino)
+    entradaDestino.addEventListener('blur', () => setTimeout(() => limpiarSugerencias(sugerenciasDestino), 200))
+  }
+
+  // Cerrar sugerencias al hacer clic fuera
+  document.addEventListener('click', (ev) => {
+    if (!ev.target.closest || (!ev.target.closest('#sugerenciasOrigen') && !ev.target.closest('#entradaOrigen'))) limpiarSugerencias(sugerenciasOrigen)
+    if (!ev.target.closest || (!ev.target.closest('#sugerenciasDestino') && !ev.target.closest('#entradaDestino'))) limpiarSugerencias(sugerenciasDestino)
+  })
 })
