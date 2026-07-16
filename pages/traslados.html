@@ -38,6 +38,8 @@
         <form id="formTraslado">
           <input type="hidden" id="idEdicionActual" value="">
           <label>Paciente: <input type="text" id="entradaPaciente" required></label>
+          <label>Chofer: <input type="text" id="entradaChofer" required></label>
+          <label>Copiloto: <input type="text" id="entradaCopiloto"></label>
           <label>Origen: 
             <div class="input-group">
               <input type="text" id="entradaOrigen" autocomplete="off" required>
@@ -50,6 +52,10 @@
               <div class="sugerencias-lista oculta" id="sugerenciasDestino"></div>
             </div>
           </label>
+          <div class="form-grid">
+            <label>Hora Salida: <input type="datetime-local" id="horaSalida"></label>
+            <label>Hora Llegada: <input type="datetime-local" id="horaLlegada"></label>
+          </div>
           <label>Notas: <input type="text" id="notasTraslado"></label>
           <div class="map-frame">
             <p>Haz click en el mapa para establecer la ubicación (origen/destino según selección).</p>

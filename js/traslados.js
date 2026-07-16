@@ -1,4 +1,5 @@
-// Manejo de traslados usando localStorage
+// Manejo de traslados usando localStorage y API PHP
+const API_BASE_TRASLADOS = window.location.pathname.includes('/pages/') ? '../php/api' : 'php/api';
 const CLAVE_TRASLADOS = 'traslados'
 let idEdicionActual = ''
 let mapa = null
@@ -13,6 +14,50 @@ function cargarTraslados() {
 
 function guardarTraslados(lista) {
   localStorage.setItem(CLAVE_TRASLADOS, JSON.stringify(lista))
+}
+
+async function sincronizarTrasladosConServidor() {
+  try {
+    const res = await fetch(`${API_BASE_TRASLADOS}/traslados.php`, {
+      credentials: 'include'
+    })
+    if (!res.ok) {
+      return cargarTraslados()
+    }
+    const json = await res.json()
+    if (!json.success) {
+      return cargarTraslados()
+    }
+    guardarTraslados(json.data)
+    return json.data
+  } catch (error) {
+    console.warn('No se pudo sincronizar traslados:', error)
+    return cargarTraslados()
+  }
+}
+
+async function guardarTrasladoServidor(traslado, esEdicion = false) {
+  try {
+    const url = `${API_BASE_TRASLADOS}/traslados.php`
+    const res = await fetch(url, {
+      method: esEdicion ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(traslado)
+    })
+    const json = await res.json()
+    if (!res.ok || !json.success) {
+      throw new Error(json.message || 'Error de servidor en traslados')
+    }
+    return json
+  } catch (error) {
+    console.warn('Error guardando traslado en servidor:', error)
+    return null
+  }
+}
+
+async function actualizarTrasladoServidor(traslado) {
+  return guardarTrasladoServidor(traslado, true)
 }
 
 function crearId() {
@@ -77,6 +122,7 @@ function aplicarSugerencia(resultado, tipo) {
     try {
       marcadorOrigen = L.marker([resultado.lat, resultado.lon]).addTo(mapa).bindPopup('Origen').openPopup()
       mapa.setView([resultado.lat, resultado.lon], 14)
+      if (mapa.invalidateSize) mapa.invalidateSize()
     } catch (e) {}
     limpiarSugerencias(document.getElementById('sugerenciasOrigen'))
   } else {
@@ -87,6 +133,7 @@ function aplicarSugerencia(resultado, tipo) {
     try {
       marcadorDestino = L.marker([resultado.lat, resultado.lon]).addTo(mapa).bindPopup('Destino').openPopup()
       mapa.setView([resultado.lat, resultado.lon], 14)
+      if (mapa.invalidateSize) mapa.invalidateSize()
     } catch (e) {}
     limpiarSugerencias(document.getElementById('sugerenciasDestino'))
   }
@@ -245,11 +292,13 @@ document.addEventListener('DOMContentLoaded', () => {
         marcadorOrigen = L.marker([lat, lng]).addTo(mapa).bindPopup('Origen').openPopup()
         const latO = document.getElementById('entradaLatOrigen'); if (latO) latO.value = lat
         const lngO = document.getElementById('entradaLngOrigen'); if (lngO) lngO.value = lng
+        if (mapa.invalidateSize) mapa.invalidateSize()
       } else {
         if (marcadorDestino) mapa.removeLayer(marcadorDestino)
         marcadorDestino = L.marker([lat, lng]).addTo(mapa).bindPopup('Destino').openPopup()
         const latD = document.getElementById('entradaLatDestino'); if (latD) latD.value = lat
         const lngD = document.getElementById('entradaLngDestino'); if (lngD) lngD.value = lng
+        if (mapa.invalidateSize) mapa.invalidateSize()
       }
     })
   } catch (err) {
@@ -262,21 +311,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('formTraslado').addEventListener('submit', (e) => {
     e.preventDefault()
     const paciente = (document.getElementById('entradaPaciente') || {}).value ? document.getElementById('entradaPaciente').value.trim() : ''
+    const chofer = (document.getElementById('entradaChofer') || {}).value ? document.getElementById('entradaChofer').value.trim() : ''
+    const copiloto = (document.getElementById('entradaCopiloto') || {}).value ? document.getElementById('entradaCopiloto').value.trim() : ''
     const origen = (document.getElementById('entradaOrigen') || {}).value ? document.getElementById('entradaOrigen').value.trim() : ''
     const destino = (document.getElementById('entradaDestino') || {}).value ? document.getElementById('entradaDestino').value.trim() : ''
+    const horaSalida = (document.getElementById('horaSalida') || {}).value || null
+    const horaLlegada = (document.getElementById('horaLlegada') || {}).value || null
     const notas = (document.getElementById('notasTraslado') || {}).value ? document.getElementById('notasTraslado').value.trim() : ''
     const latO = (document.getElementById('entradaLatOrigen') || {}).value
     const lngO = (document.getElementById('entradaLngOrigen') || {}).value
     const latD = (document.getElementById('entradaLatDestino') || {}).value
     const lngD = (document.getElementById('entradaLngDestino') || {}).value
-    if (!paciente || !origen || !destino) return alert('Complete los campos obligatorios')
+    if (!paciente || !chofer || !origen || !destino) return alert('Complete los campos obligatorios')
     const lista = cargarTraslados()
     if (idEdicionActual) {
       const t = lista.find(x => x.id === idEdicionActual)
       if (!t) return
       t.paciente = paciente
+      t.chofer = chofer
+      t.copiloto = copiloto
       t.origen = origen
       t.destino = destino
+      t.horaSalida = horaSalida
+      t.horaLlegada = horaLlegada
       t.notas = notas
       if (latO && lngO) t.origenCoord = { lat: parseFloat(latO), lng: parseFloat(lngO) }
       if (latD && lngD) t.destinoCoord = { lat: parseFloat(latD), lng: parseFloat(lngD) }
@@ -289,7 +346,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const nuevo = {
       id: crearId(),
-      paciente, origen, destino, notas,
+      paciente,
+      chofer,
+      copiloto,
+      origen,
+      destino,
+      horaSalida,
+      horaLlegada,
+      notas,
       estado: 'pendiente',
       creado: new Date().toISOString(),
       historial: [{ estado: 'pendiente', fecha: new Date().toISOString() }]
